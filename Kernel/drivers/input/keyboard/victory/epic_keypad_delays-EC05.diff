@@ -1,0 +1,164 @@
+diff --git a/Kernel/drivers/input/keyboard/Kconfig b/Kernel/drivers/input/keyboard/Kconfig
+--- a/Kernel/drivers/input/keyboard/Kconfig
++++ b/Kernel/drivers/input/keyboard/Kconfig
+@@ -212,6 +212,33 @@
+         bool "Victory S3C Keypad"
+         help
+         Victory Product
++
++config KEYPAD_S3C_VICTORY_EXPORT_DELAYS
++	bool "Export keypad column-switch and timer delays via sysfs"
++	depends on KEYPAD_S3C_VICTORY && SYSFS
++	default y
++	help
++	  Allows runtime configuration of the keypad column-switch and timer delays
++	  via sysfs exported column_delay and timer_delay variables.
++
++	  The current delays may be read with:
++	    cat /sys/devices/platform/s3c-keypad/column_delay
++	    cat /sys/devices/platform/s3c-keypad/timer_delay
++	  and new delays may be set with:
++	    echo C > /sys/devices/platform/s3c-keypad/column_delay
++	    echo T > /sys/devices/platform/s3c-keypad/timer_delay
++	  where C is the column-switch delay (µs) and T the timer delay (jiffies).
++
++	  A timer delay of "1" yields the shortest timer, and the most responsive
++	  keypad possible, whereas a delay of HZ (e.g., "256") is the longest
++	  allowed.  For HZ=256, a delay of "7" (3*HZ/100) is default.
++
++	  A column-switch delay of "1" is the most efficient (0.02% CPU util.) but
++	  results in ghost key presses across columns (rows).  The default "300" is
++	  very inefficient, 6.9% CPU util., for a timer delay of "7".  Values of
++	  "50" (1.4% CPU) and even "5" (0.2% CPU) work well without ghosting.  This
++	  delay affects efficiency only, not responsiveness.
++
+ endif
+ 
+ 
+diff --git a/Kernel/drivers/input/keyboard/victory/s3c-keypad.c b/Kernel/drivers/input/keyboard/victory/s3c-keypad.c
+--- a/Kernel/drivers/input/keyboard/victory/s3c-keypad.c
++++ b/Kernel/drivers/input/keyboard/victory/s3c-keypad.c
+@@ -79,6 +79,21 @@
+ 
+ static int in_sleep = 0;
+ 
++#define COLUMN_DELAY_DEFAULT KEYPAD_DELAY
++#define COLUMN_DELAY_MAX     (1000000/(HZ*KEYPAD_COLUMNS))
++#define TIMER_DELAY_DEFAULT  (3*HZ/100)
++#define TIMER_DELAY_MAX      HZ
++
++#ifdef CONFIG_KEYPAD_S3C_VICTORY_EXPORT_DELAYS
++#define COLUMN_DELAY column_delay
++#define TIMER_DELAY  timer_delay
++static unsigned long column_delay = COLUMN_DELAY_DEFAULT;
++static unsigned long timer_delay  = TIMER_DELAY_DEFAULT;
++#else
++#define COLUMN_DELAY COLUMN_DELAY_DEFAULT
++#define TIMER_DELAY  TIMER_DELAY_DEFAULT
++#endif
++
+ //static ssize_t keyshort_test(struct device *dev, struct device_attribute *attr, char *buf);
+ 
+ //hojun_kim [
+@@ -173,7 +188,7 @@
+ 
+ 		writel(cval, key_base+S3C_KEYIFCOL);             // make that Normal output.
+ 								 // others shuld be High-Z output.
+-		udelay(KEYPAD_DELAY);
++		udelay(COLUMN_DELAY);
+ 
+ 		// rval = ~(readl(key_base+S3C_KEYIFROW)) & ((1<<KEYPAD_ROWS)-1) ;
+ 
+@@ -274,7 +289,7 @@
+ 
+ 
+ 	if (restart_timer) {
+-		mod_timer(&keypad_timer,jiffies + HZ/10);
++		mod_timer(&keypad_timer,jiffies + TIMER_DELAY);
+ 	} else {
+                 is_timer_on = FALSE;
+ 		del_timer(&keypad_timer);	
+@@ -291,7 +306,7 @@
+ 	writel(readl(key_base+S3C_KEYIFCON) & ~(INT_F_EN|INT_R_EN), key_base+S3C_KEYIFCON);
+ 
+ 	//keypad_timer.expires = jiffies;
+-      	keypad_timer.expires = jiffies + (3 * HZ/100); // victory froyo merge nandu
++      	keypad_timer.expires = jiffies + TIMER_DELAY; // victory froyo merge nandu
+ 
+ 
+ 
+@@ -659,6 +674,39 @@
+ static DEVICE_ATTR(brightness, S_IRUGO | S_IWUSR | S_IWOTH | S_IXOTH, NULL, key_led_control);
+ // nandu froyo merge
+ 
++#ifdef CONFIG_KEYPAD_S3C_VICTORY_EXPORT_DELAYS
++#define DELAY_ATTR(delay, delay_max) \
++static ssize_t delay##_show(struct device *dev, \
++                            struct device_attribute *attr, char *buf) \
++{ \
++	return snprintf(buf, PAGE_SIZE, "%lu\n", delay); \
++} \
++\
++static ssize_t delay##_store(struct device *dev, \
++                             struct device_attribute *attr, \
++                             const char *buf, size_t count) \
++{ \
++	unsigned long val; \
++	int res; \
++\
++	if ((res = strict_strtoul(buf, 10, &val)) < 0) \
++		return res; \
++\
++	if (val == 0 || val > delay_max) \
++		return -EINVAL; \
++\
++	delay = val; \
++\
++	return count; \
++} \
++\
++static DEVICE_ATTR(delay, S_IRUGO | S_IWUSR, delay##_show, delay##_store);
++
++DELAY_ATTR(column_delay, COLUMN_DELAY_MAX)
++DELAY_ATTR(timer_delay,  TIMER_DELAY_MAX)
++#undef DELAY_ATTR
++#endif
++
+ static int __init s3c_keypad_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res, *keypad_mem, *keypad_irq;
+@@ -811,7 +859,7 @@
+                 goto out;
+         }
+ 
+-          keypad_timer.expires = jiffies + (3 * HZ/100);
++          keypad_timer.expires = jiffies + TIMER_DELAY;
+ 
+ 
+           if (is_timer_on == FALSE) {
+@@ -840,6 +888,14 @@
+         pr_err("Failed to create device file(%s)!\n", dev_attr_brightness.attr.name);
+   	}
+ 
++#ifdef CONFIG_KEYPAD_S3C_VICTORY_EXPORT_DELAYS
++	if (device_create_file(&pdev->dev, &dev_attr_column_delay) < 0)
++		pr_err("Unable to create \"%s\".\n", dev_attr_column_delay.attr.name);
++
++	if (device_create_file(&pdev->dev, &dev_attr_timer_delay) < 0)
++		pr_err("Unable to create \"%s\".\n", dev_attr_timer_delay.attr.name);
++#endif
++
+ 
+ 	
+ 	return 0;
+@@ -878,6 +934,10 @@
+ 		keypad_clock = NULL;
+ 	}
+ 
++#ifdef CONFIG_KEYPAD_S3C_VICTORY_EXPORT_DELAYS
++	device_remove_file(&pdev->dev, &dev_attr_column_delay);
++	device_remove_file(&pdev->dev, &dev_attr_timer_delay);
++#endif
+ 	input_unregister_device(input_dev);
+ 	iounmap(key_base);
+ 	kfree(pdev->dev.platform_data);

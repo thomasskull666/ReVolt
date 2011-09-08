@@ -1,0 +1,1520 @@
+#!/system/bin/sh
+#
+# User configuration script for /system/bin/ss4n1
+# 23:04 Tuesday, 24 May, 2011
+# Tweaked default profiles for Epic4G by thomasskull666
+
+echoit ()
+{
+echo "$1" | fold -s -w 50;
+}
+
+who=`whoami`;
+if [ $who != "root" ];
+then
+	echoit "sscfg must be run as root.";
+	echoit "";
+	echoit "Press enter to attempt to run as root";
+	echoit "Or press 1 then enter to continue without root access (Read-only mode)";
+	read opt;
+	if [ "$opt" -eq 1 ]; 
+	then
+		echoit "";
+		echoit "Continuing without root access...";
+	else
+	su -c sscfg;
+	echoit "";
+	echoit "Exited sscfg as root";
+	exit;
+	fi;
+fi;
+
+apply_changes()
+{
+tpid1=`pidof ss4n1 | awk '{print $(NF)}'`;
+if [ $tpid1 ]
+then
+	echoit "Stopping SS4N1 process...";
+	kill -9 $tpid1;
+	echoit "SS4N1 process stopped.";
+else
+	echoit "SS4N1 process is not running";
+fi;
+
+echoit "";
+echoit "Applying NEW settings...";
+sync;
+mount -o remount,rw /system;
+echo "# Initialization for /system/bin/ss4n1" > /system/etc/ss4n1.conf;
+	echo "ENABLE_SS4N1=$ENABLE_SS4N1" >> /system/etc/ss4n1.conf;
+	echo "ENABLE_MAXPHONE=$ENABLE_MAXPHONE" >> /system/etc/ss4n1.conf;
+	echo "DEWONKIFIER=$DEWONKIFIER" >> /system/etc/ss4n1.conf;
+	echo "TWEAK_NOATIME=$TWEAK_NOATIME" >> /system/etc/ss4n1.conf;
+	echo "TWEAK_STORAGE=$TWEAK_STORAGE" >> /system/etc/ss4n1.conf;
+	echo "TWEAK_UI=$TWEAK_UI" >> /system/etc/ss4n1.conf;
+	echo "TWEAK_NETWORK=$TWEAK_NETWORK" >> /system/etc/ss4n1.conf;
+	echo "ENABLE_SWITCH=$ENABLE_SWITCH" >> /system/etc/ss4n1.conf;
+	echo "SWITCH_UV=$SWITCH_UV" >> /system/etc/ss4n1.conf;
+	echo "SWITCH_CPUSCHED=$SWITCH_CPUSCHED" >> /system/etc/ss4n1.conf;
+	echo "SWITCH_VM=$SWITCH_VM" >> /system/etc/ss4n1.conf;
+	echo "SWITCH_CPUFREQ=$SWITCH_CPUFREQ" >> /system/etc/ss4n1.conf;
+	echo "AWAKE_GOVERNOR=$AWAKE_GOVERNOR" >> /system/etc/ss4n1.conf;
+	echo "AWAKE_MIN_FREQ=$AWAKE_MIN_FREQ" >> /system/etc/ss4n1.conf;
+	echo "AWAKE_MAX_FREQ=$AWAKE_MAX_FREQ" >> /system/etc/ss4n1.conf;
+	echo "AWAKE_UP_THRESHOLD=$AWAKE_UP_THRESHOLD" >> /system/etc/ss4n1.conf;
+	echo "AWAKE_MIN_UV=$AWAKE_MIN_UV" >> /system/etc/ss4n1.conf;
+	echo "AWAKE_MAX_UV=$AWAKE_MAX_UV" >> /system/etc/ss4n1.conf; 
+	echo "SLEEP_GOVERNOR=$SLEEP_GOVERNOR" >> /system/etc/ss4n1.conf;
+	echo "SLEEP_MIN_FREQ=$SLEEP_MIN_FREQ" >> /system/etc/ss4n1.conf;
+	echo "SLEEP_MAX_FREQ=$SLEEP_MAX_FREQ" >> /system/etc/ss4n1.conf;
+	echo "SLEEP_UP_THRESHOLD=$SLEEP_UP_THRESHOLD" >> /system/etc/ss4n1.conf;
+	echo "SLEEP_MIN_UV=$SLEEP_MIN_UV" >> /system/etc/ss4n1.conf;  
+	echo "SLEEP_MAX_UV=$SLEEP_MAX_UV" >> /system/etc/ss4n1.conf;
+	echo "# AWAKE mode CAVS table" >> /system/etc/ss4n1.conf; 
+	echo "A128000=$A128000" >> /system/etc/ss4n1.conf;
+	echo "A245000=$A245000" >> /system/etc/ss4n1.conf;
+	echo "A384000=$A384000" >> /system/etc/ss4n1.conf;
+	echo "A422400=$A422400" >> /system/etc/ss4n1.conf;
+	echo "A460800=$A460800" >> /system/etc/ss4n1.conf;
+	echo "A499200=$A499200" >> /system/etc/ss4n1.conf;
+	echo "A537600=$A537600" >> /system/etc/ss4n1.conf;
+	echo "A576000=$A576000" >> /system/etc/ss4n1.conf;
+	echo "A614400=$A614400" >> /system/etc/ss4n1.conf;
+	echo "A652800=$A652800" >> /system/etc/ss4n1.conf;
+	echo "A691200=$A691200" >> /system/etc/ss4n1.conf;
+	echo "A729600=$A729600" >> /system/etc/ss4n1.conf;
+	echo "A768000=$A768000" >> /system/etc/ss4n1.conf;
+	echo "A806400=$A806400" >> /system/etc/ss4n1.conf;
+	echo "A844800=$A844800" >> /system/etc/ss4n1.conf;
+	echo "A883200=$A883200" >> /system/etc/ss4n1.conf;
+	echo "A921600=$A921600" >> /system/etc/ss4n1.conf;
+	echo "A960000=$A960000" >> /system/etc/ss4n1.conf;
+	echo "A998400=$A998400" >> /system/etc/ss4n1.conf;
+	echo "A1036800=$A1036800" >> /system/etc/ss4n1.conf;
+	echo "A1075200=$A1075200" >> /system/etc/ss4n1.conf;
+	echo "A1113600=$A1113600" >> /system/etc/ss4n1.conf;
+	echo "# SLEEP mode CAVS table" >> /system/etc/ss4n1.conf; 
+	echo "S128000=$S128000" >> /system/etc/ss4n1.conf;
+	echo "S245000=$S245000" >> /system/etc/ss4n1.conf;
+	echo "S384000=$S384000" >> /system/etc/ss4n1.conf;
+	echo "S422400=$S422400" >> /system/etc/ss4n1.conf;
+	echo "S460800=$S460800" >> /system/etc/ss4n1.conf;
+	echo "S499200=$S499200" >> /system/etc/ss4n1.conf;
+	echo "S537600=$S537600" >> /system/etc/ss4n1.conf;
+	echo "S576000=$S576000" >> /system/etc/ss4n1.conf;
+	echo "S614400=$S614400" >> /system/etc/ss4n1.conf;
+	echo "S652800=$S652800" >> /system/etc/ss4n1.conf;
+	echo "S691200=$S691200" >> /system/etc/ss4n1.conf;
+	echo "S729600=$S729600" >> /system/etc/ss4n1.conf;
+	echo "S768000=$S768000" >> /system/etc/ss4n1.conf;
+	echo "S806400=$S806400" >> /system/etc/ss4n1.conf;
+	echo "S844800=$S844800" >> /system/etc/ss4n1.conf;
+	echo "S883200=$S883200" >> /system/etc/ss4n1.conf;
+	echo "S921600=$S921600" >> /system/etc/ss4n1.conf;
+	echo "S960000=$S960000" >> /system/etc/ss4n1.conf;
+	echo "S998400=$S998400" >> /system/etc/ss4n1.conf;
+	echo "S1036800=$S1036800" >> /system/etc/ss4n1.conf;
+	echo "S1075200=$S1075200" >> /system/etc/ss4n1.conf;
+	echo "S1113600=$S1113600" >> /system/etc/ss4n1.conf;
+	mount -o remount,ro /system;
+echoit "NEW settings applied.";
+
+if [ $ENABLE_SS4N1 -eq 1 ]
+then
+	display_config "NEW";
+	restart;
+else
+	echoit "";
+	echoit "SS4N1 script now DISABLED!";
+	echoit "Run sscfg again to enable SS4N1 script";
+	echoit "";
+	echoit "You can now exit ADB or terminal";
+fi;
+exit;
+}
+
+restart()
+{
+echoit "Re-starting SS4N1 process...";
+nohup ss4n1 2>/dev/null &
+sleep 1;
+tpid2=`pidof ss4n1 | awk '{print $(NF)}'`;
+if [ $tpid2 ]
+then
+	if [ -e /proc/$tpid2/oom_score_adj ];
+	then
+		echo -1000 > /proc/$tpid2/oom_score_adj; # 2.6.37+
+	else
+		echo -17 > /proc/$tpid2/oom_adj; # 2.6.35
+	fi;
+	echoit "SS4N1 process re-started";
+	echoit "You can now exit ADB or terminal";
+else
+	echoit "Unable to restart SS4N1 process";
+	echoit "Run sscfg again and re-apply settings";
+	echoit "Or reboot phone to restart SS4N1";
+fi;
+}
+
+display_settings()
+{
+echoit "**************************************************";
+echoit "SSCFG: Display settings";
+echoit "**************************************************";
+echoit "";
+echoit "[1] Display CURRENT configuration";
+echoit "[2] Display HAVS Min & Max voltage table";
+echoit "[3] Display CAVS AWAKE mode voltage table";
+echoit "[4] Display CAVS SLEEP mode voltage table";
+echoit "[5] Display miscellaneous information";
+echoit "[ENTER] Return to home screen";
+read choice_display;
+case $choice_display in
+	"1") display_config "CURRENT"; 
+		 display_settings;;
+	"2") display_havs;
+		 display_settings;;
+	"3") display_cavs AWAKE;
+		 display_settings;;
+	"4") display_cavs SLEEP; 
+		 display_settings;;
+	"5") display_stats; 
+		 display_settings;;
+	"*") ;;
+esac;	
+}
+
+display_havs()
+{
+if [ -e /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels_havs ];
+then
+	echoit "**************************************************";
+	echoit "SSCFG: HAVS Min & Max voltage table";
+	echoit "**************************************************";
+	echoit "CPU Frequency: Min_voltage Max_voltage";
+	echoit "";
+	cat /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels_havs;
+else
+	echoit "Non-HAVS kernel detected";
+	echoit "No HAVS voltage table to show";
+fi;
+echoit "";
+echoit "Press Enter to continue";
+read keypress;
+echoit "";
+}
+
+display_config()
+{
+NAME=$*;
+echoit "**************************************************";
+echoit "SSCFG: $NAME configuration";
+echoit "**************************************************";
+echoit "ENABLE_SS4N1       = $ENABLE_SS4N1";
+echoit "ENABLE_MAXPHONE    = $ENABLE_MAXPHONE";
+echoit "DEWONKIFIER        = $DEWONKIFIER";
+echoit "TWEAK_NOATIME      = $TWEAK_NOATIME";
+echoit "TWEAK_STORAGE      = $TWEAK_STORAGE";
+echoit "TWEAK_UI           = $TWEAK_UI";
+echoit "TWEAK_NETWORK      = $TWEAK_NETWORK";
+echoit "ENABLE_SWITCH      = $ENABLE_SWITCH";
+echoit "SWITCH_UV          = $SWITCH_UV";
+echoit "SWITCH_CPUSCHED    = $SWITCH_CPUSCHED";
+echoit "SWITCH_VM          = $SWITCH_VM";
+echoit "SWITCH_CPUFREQ     = $SWITCH_CPUFREQ";
+echoit "AWAKE_GOVERNOR     = $AWAKE_GOVERNOR";
+echoit "AWAKE_MIN_FREQ     = $AWAKE_MIN_FREQ";
+echoit "AWAKE_MAX_FREQ     = $AWAKE_MAX_FREQ";
+echoit "AWAKE_UP_THRESHOLD = $AWAKE_UP_THRESHOLD";
+echoit "AWAKE_MIN_UV       = $AWAKE_MIN_UV";
+echoit "AWAKE_MAX_UV       = $AWAKE_MAX_UV";
+echoit "SLEEP_GOVERNOR     = $SLEEP_GOVERNOR";
+echoit "SLEEP_MIN_FREQ     = $SLEEP_MIN_FREQ";
+echoit "SLEEP_MAX_FREQ     = $SLEEP_MAX_FREQ";
+echoit "SLEEP_UP_THRESHOLD = $SLEEP_UP_THRESHOLD";
+echoit "SLEEP_MIN_UV       = $SLEEP_MIN_UV";
+echoit "SLEEP_MAX_UV       = $SLEEP_MAX_UV";
+echoit "**************************************************";
+if [ $NAME = "NEW" ];
+then
+	echoit "Press Enter to restart SS4N1 process and exit";
+else
+	echoit "Press Enter to continue";
+fi;
+read keypress;
+echoit "";
+}
+
+set_cavs_awake()
+{
+MIN_UV=$1;
+MAX_UV=$2;
+if [ `expr 950 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then 
+	A128000=128000,800,`expr 975 "-" $MAX_UV`; 
+	A245000=245000,800,`expr 1000 "-" $MAX_UV`;
+	A384000=384000,800,`expr 1025 "-" $MAX_UV`;
+	A422400=422400,800,`expr 1050 "-" $MAX_UV`;
+else
+	A128000=128000,`expr 950 "-" $MIN_UV`,`expr 975 "-" $MAX_UV`;
+	A245000=245000,`expr 950 "-" $MIN_UV`,`expr 1000 "-" $MAX_UV`;
+	A384000=384000,`expr 950 "-" $MIN_UV`,`expr 1025 "-" $MAX_UV`;
+	A422400=422400,`expr 950 "-" $MIN_UV`,`expr 1050 "-" $MAX_UV`;
+fi;
+
+if [ `expr 975 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	A460800=460800,800,`expr 1050 "-" $MAX_UV`;
+else
+	A460800=460800,`expr 975 "-" $MIN_UV`,`expr 1050 "-" $MAX_UV`;
+fi;	
+
+if [ `expr 1000 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	A499200=499200,800,`expr 1075 "-" $MAX_UV`;
+	A537600=537600,800,`expr 1075 "-" $MAX_UV`;
+else
+	A499200=499200,`expr 1000 "-" $MIN_UV`,`expr 1075 "-" $MAX_UV`;
+	A537600=537600,`expr 1000 "-" $MIN_UV`,`expr 1075 "-" $MAX_UV`;
+fi;
+
+if [ `expr 1025 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	A576000=576000,800,`expr 1100 "-" $MAX_UV`;
+else
+	A576000=576000,`expr 1025 "-" $MIN_UV`,`expr 1100 "-" $MAX_UV`;
+fi;
+
+if [ `expr 1050 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	A614400=614400,800,`expr 1100 "-" $MAX_UV`;
+else
+	A614400=614400,`expr 1050 "-" $MIN_UV`,`expr 1100 "-" $MAX_UV`;
+fi;
+
+if [ `expr 1075 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	A652800=652800,800,`expr 1125 "-" $MAX_UV`;
+else
+	A652800=652800,`expr 1075 "-" $MIN_UV`,`expr 1125 "-" $MAX_UV`;
+fi;
+
+	A691200=691200,`expr 1100 "-" $MIN_UV`,`expr 1150 "-" $MAX_UV`;
+	A729600=729600,`expr 1125 "-" $MIN_UV`,`expr 1175 "-" $MAX_UV`;
+	A768000=768000,`expr 1150 "-" $MIN_UV`,`expr 1200 "-" $MAX_UV`;
+	A806400=806400,`expr 1175 "-" $MIN_UV`,`expr 1225 "-" $MAX_UV`;
+	A844800=844800,`expr 1200 "-" $MIN_UV`,`expr 1250 "-" $MAX_UV`;
+	A883200=883200,`expr 1200 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	A921600=921600,`expr 1225 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	A960000=960000,`expr 1225 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	A998400=998400,`expr 1225 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	A1036800=1036800,`expr 1275 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	A1075200=1075200,`expr 1275 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	A1113600=1113600,`expr 1275 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+}
+
+set_cavs_sleep()
+{
+MIN_UV=$1;
+MAX_UV=$2;
+if [ `expr 950 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then 
+	S128000=128000,800,`expr 975 "-" $MAX_UV`; 
+	S245000=245000,800,`expr 1000 "-" $MAX_UV`;
+	S384000=384000,800,`expr 1025 "-" $MAX_UV`;
+	S422400=422400,800,`expr 1050 "-" $MAX_UV`;
+else
+	S128000=128000,`expr 950 "-" $MIN_UV`,`expr 975 "-" $MAX_UV`;
+	S245000=245000,`expr 950 "-" $MIN_UV`,`expr 1000 "-" $MAX_UV`;
+	S384000=384000,`expr 950 "-" $MIN_UV`,`expr 1025 "-" $MAX_UV`;
+	S422400=422400,`expr 950 "-" $MIN_UV`,`expr 1050 "-" $MAX_UV`;
+fi;
+
+if [ `expr 975 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	S460800=460800,800,`expr 1050 "-" $MAX_UV`;
+else
+	S460800=460800,`expr 975 "-" $MIN_UV`,`expr 1050 "-" $MAX_UV`;
+fi;	
+
+if [ `expr 1000 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	S499200=499200,800,`expr 1075 "-" $MAX_UV`;
+	S537600=537600,800,`expr 1075 "-" $MAX_UV`;
+else
+	S499200=499200,`expr 1000 "-" $MIN_UV`,`expr 1075 "-" $MAX_UV`;
+	S537600=537600,`expr 1000 "-" $MIN_UV`,`expr 1075 "-" $MAX_UV`;
+fi;
+
+if [ `expr 1025 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	S576000=576000,800,`expr 1100 "-" $MAX_UV`;
+else
+	S576000=576000,`expr 1025 "-" $MIN_UV`,`expr 1100 "-" $MAX_UV`;
+fi;
+
+if [ `expr 1050 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	S614400=614400,800,`expr 1100 "-" $MAX_UV`;
+else
+	S614400=614400,`expr 1050 "-" $MIN_UV`,`expr 1100 "-" $MAX_UV`;
+fi;
+
+if [ `expr 1075 "-" $MIN_UV` -lt 800 ]; # check for minimum voltage of 800
+then
+	S652800=652800,800,`expr 1125 "-" $MAX_UV`;
+else
+	S652800=652800,`expr 1075 "-" $MIN_UV`,`expr 1125 "-" $MAX_UV`;
+fi;
+
+	S691200=691200,`expr 1100 "-" $MIN_UV`,`expr 1150 "-" $MAX_UV`;
+	S729600=729600,`expr 1125 "-" $MIN_UV`,`expr 1175 "-" $MAX_UV`;
+	S768000=768000,`expr 1150 "-" $MIN_UV`,`expr 1200 "-" $MAX_UV`;
+	S806400=806400,`expr 1175 "-" $MIN_UV`,`expr 1225 "-" $MAX_UV`;
+	S844800=844800,`expr 1200 "-" $MIN_UV`,`expr 1250 "-" $MAX_UV`;
+	S883200=883200,`expr 1200 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	S921600=921600,`expr 1225 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	S960000=960000,`expr 1225 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	S998400=998400,`expr 1225 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	S1036800=1036800,`expr 1275 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	S1075200=1075200,`expr 1275 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+	S1113600=1113600,`expr 1275 "-" $MIN_UV`,`expr 1275 "-" $MAX_UV`;
+}
+
+display_cavs()
+{
+if [ -e /sys/module/avs/parameters/avs_adjust ];
+then
+	echoit "**************************************************";
+	echoit "SSCFG: $1 mode Voltage table";
+	echoit "**************************************************";
+	echoit "CPU frequency, min voltage, max voltage";
+	echoit "";
+	for i in $ALLFREQS;
+	do
+		if [ $1 = "AWAKE" ]
+		then
+			eval echo \$A$i;
+		else
+			eval echo \$S$i;
+		fi;
+	done;
+	echoit "**************************************************";
+else
+	echoit "Non-CAVS kernel detected";
+	echoit "No custom voltage table to show";
+fi;
+echoit "";
+echoit "Press Enter to continue";
+read keypress;
+echoit "";
+}
+
+displayparm()
+{
+echo "$1 = `cat $1`";
+}
+
+display_stats()
+{
+echoit "*********************************************";
+echoit "SSCFG: Display miscellaneous information";
+echoit "*********************************************";
+echoit "CPU info, Kernel info, Mount points, Filesystem usage, Memory stats, Modules loaded, Top 10 tasks, Battery stats, Virtual Memory settings";
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----CPU info----";
+cat /proc/cpuinfo;
+echoit "----End of CPU info----";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----Kernel info----";
+uname -r;
+uname -v;
+echoit "----End of Kernel info----";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----Mount points----";
+mount;
+echoit "----End of Mount points----";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----Filesystem usage----";
+df -ah;
+echoit "----End of Filesystem usage----";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----Memory stats----";
+free;
+echoit "----End of Memory stats----";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----Modules loaded----";
+cat /proc/modules;
+echoit "----End of Modules loaded----";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----Top 10 Tasks----";
+echoit "please wait ...";
+top -m 10 -n 1;
+echoit "----End of Top 10 tasks----";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "----Battery stats----";
+cat /sys/class/power_supply/battery/uevent;
+tmp=`cat /sys/class/power_supply/battery/temp`;
+c=`expr "$tmp" "/" 10`;
+f=`expr "$tmp" "*" 18`;
+f=`expr "$f" "/" 100`;
+f=`expr "$f" "+" 32`;
+echoit "Temperature: $c C / $f F";
+echoit "----End of Battery stats----";
+echoit "Press Enter to continue...";
+read keypress
+echoit "----Virtual Memory settings----";
+displayparm "/proc/sys/vm/swappiness";
+displayparm "/proc/sys/vm/dirty_expire_centisecs";
+displayparm "/proc/sys/vm/dirty_writeback_centisecs";
+displayparm "/proc/sys/vm/dirty_background_ratio";
+displayparm "/proc/sys/vm/dirty_ratio";
+displayparm "/proc/sys/vm/vfs_cache_pressure";
+displayparm "/proc/sys/vm/min_free_kbytes";
+echoit "----End of Virtual Memory settings----";
+echoit "";
+echoit "----End of Display Statistics----";
+echoit "";
+echoit "Press Enter to return to home screen";
+read keypress;
+echoit "";
+}
+
+toggle()
+{
+if [ $1 -gt 0 ]
+then
+	echo 0;
+else
+	echo 1;
+fi;
+}
+
+get_disp()
+{
+if [ $1 -gt 0 ]
+then
+	echoit "Disable";
+else
+	echoit "Enable";
+fi;
+}
+
+read_gov()
+{
+read gov;
+case $gov in
+	"1") gov=interactive;;
+	"2") gov=conservative;;
+	"3") gov=ondemand;;
+	"4") gov=powersave;;
+	"5") gov=userspace;;
+	"6") gov=performance;;
+	"7") gov=smartass;;
+	"8") gov=SavagedZen;;
+	"9") gov=interactiveX;;
+	*) 	 gov=;;
+esac;
+if [ $gov ]
+then
+	EXIST=;
+	for i in $ALLGOVS;
+	do
+		if [ $i = $gov ];
+		then
+			EXIST=1;
+		fi;
+	done;
+	if [ $EXIST ] 
+	then 
+		new_gov=$gov;
+		gov=;
+	else
+		echoit "Available CPU Frequency governors:"
+		echoit "$ALLGOVS";
+		echoit "$gov governor not available. Please choose another";
+		read_gov;
+	fi;
+else
+	new_gov=;
+fi;
+}
+
+read_freq()
+{
+MINMAX=$1;
+echoit "Available CPU frequencies:";
+echoit "$ALLFREQS";
+echoit "";
+echoit "Enter new $MINMAX CPU frequency";
+echoit "or press Enter to leave unchanged";
+read freq;
+
+if [ $freq ]
+then
+	EXIST=;
+	for i in $ALLFREQS;
+	do
+		if [ $i = $freq ];
+		then
+			EXIST=1;
+		fi;
+	done;
+	if [ $EXIST ] 
+	then 
+		new_freq=$freq;
+		freq=;
+	else
+		echoit "Invalid frequency. Please re-enter";
+		read_freq $MINMAX;
+	fi;
+else
+	new_freq=;
+fi;
+}
+
+set_threshold()
+{
+echoit "";
+echoit "Enter new up-threshold level (1 to 99)" ;
+echoit "or press Enter to leave unchanged";
+read threshold;
+if [ $threshold ]
+then
+	if [ $threshold -ge 1 ] && [ $threshold -le 99 ]
+	then 
+		new_threshold=$threshold;
+		threshold=;
+	else
+		echoit "Invalid value entered";
+		set_threshold;
+	fi;
+else
+	new_threshold=;
+fi;
+}
+
+read_uv()
+{
+TYPE=$1;
+MAX=$2;
+echoit "";
+echoit "Enter new $TYPE UV delta value";
+echoit "(min=0 max=$MAX step=25)";
+echoit "or press Enter to leave unchanged";
+read uv;
+if [ $uv ]
+then
+	if [ $uv -ge 0 ] && [ $uv -le $MAX ] && [ `expr $uv "%" 25` -eq 0 ];
+	then 
+		new_uv=$uv;
+		uv=;
+	else
+		echoit "Invalid UV delta value. Please re-enter";
+		read_uv $TYPE $MAX;
+	fi;
+else
+	new_uv=;
+fi;
+}
+
+save_settings()
+{
+# Save current settings
+p1=$ENABLE_SS4N1;
+p2=$ENABLE_MAXPHONE;
+p3=$DEWONKIFIER;
+p4=$TWEAK_NOATIME;
+p5=$TWEAK_STORAGE;
+p6=$TWEAK_UI;
+p7=$TWEAK_NETWORK;
+p8=$ENABLE_SWITCH;
+p9=$SWITCH_UV;
+p10=$SWITCH_CPUSCHED;
+p11=$SWITCH_VM;
+p12=$SWITCH_CPUFREQ;
+p13=$AWAKE_GOVERNOR;
+p14=$AWAKE_MIN_FREQ;
+p15=$AWAKE_MAX_FREQ;
+p16=$AWAKE_UP_THRESHOLD;
+p17=$AWAKE_MIN_UV;
+p18=$AWAKE_MAX_UV;
+p19=$SLEEP_GOVERNOR;
+p20=$SLEEP_MIN_FREQ;
+p21=$SLEEP_MAX_FREQ;
+p22=$SLEEP_UP_THRESHOLD;
+p23=$SLEEP_MIN_UV;
+p24=$SLEEP_MAX_UV;
+}
+
+presets()
+{
+echoit "**************************************************";
+echoit "SSCFG: PRESET profiles";
+echoit "**************************************************";
+echoit "Select to view & load preset";
+echoit "[1] DEFAULT settings (no undervolting)";
+echoit "[2] High Battery Savings";
+echoit "[3] Moderate Battery Savings";
+echoit "[4] Moderate Performance";
+echoit "[5] High Performance";
+echoit "[6] Maximum Overclock Undervolt (UNSTABLE?)";
+echoit "[7] UNDO changes ";
+echoit "[ENTER] Load preset and continue";
+read choice_preset;
+case $choice_preset in
+	"1")	PROFILE="DEFAULT";
+			ENABLE_SS4N1=1;
+			ENABLE_MAXPHONE=1;
+			DEWONKIFIER=0;
+			TWEAK_NOATIME=1;
+			TWEAK_STORAGE=1;
+			TWEAK_UI=1;
+			TWEAK_NETWORK=1;
+			ENABLE_SWITCH=1;
+			SWITCH_UV=1;
+			SWITCH_CPUSCHED=1;
+			SWITCH_VM=1;
+			SWITCH_CPUFREQ=1;
+			AWAKE_GOVERNOR=conservative;
+			AWAKE_MIN_FREQ=100000;
+			AWAKE_MAX_FREQ=1000000
+;
+			AWAKE_UP_THRESHOLD=;
+			AWAKE_MIN_UV=0;
+			AWAKE_MAX_UV=0;
+			SLEEP_GOVERNOR=conservative;
+			SLEEP_MIN_FREQ=100000;
+			SLEEP_MAX_FREQ=1000000;
+			SLEEP_UP_THRESHOLD=99;
+			SLEEP_MIN_UV=0;
+			SLEEP_MAX_UV=0;
+			set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+			set_cavs_sleep $SLEEP_MIN_UV $SLEEP_MAX_UV;
+			display_config $PROFILE; 
+			presets;;
+
+	"2")	PROFILE="High_Battery_Savings";
+			ENABLE_SS4N1=1;
+			ENABLE_MAXPHONE=1;
+			DEWONKIFIER=0;
+			TWEAK_NOATIME=1;
+			TWEAK_STORAGE=1;
+			TWEAK_UI=1;
+			TWEAK_NETWORK=1;
+			ENABLE_SWITCH=1;
+			SWITCH_UV=1;
+			SWITCH_CPUSCHED=1;
+			SWITCH_VM=1;
+			SWITCH_CPUFREQ=1;
+			AWAKE_GOVERNOR=conservative;
+			AWAKE_MIN_FREQ=100000;
+			AWAKE_MAX_FREQ=1000000;
+			AWAKE_UP_THRESHOLD=99;
+			AWAKE_MIN_UV=0;
+			AWAKE_MAX_UV=0;
+			SLEEP_GOVERNOR=conservative;
+			SLEEP_MIN_FREQ=100000;
+			SLEEP_MAX_FREQ=800000;
+			SLEEP_UP_THRESHOLD=99;
+			SLEEP_MIN_UV=0;
+			SLEEP_MAX_UV=0;
+			set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+			set_cavs_sleep $AWAKE_MIN_UV $SLEEP_MAX_UV;
+			display_config $PROFILE;
+			presets;;
+
+	"3")	PROFILE="Moderate_Battery_Savings";
+			ENABLE_SS4N1=1;
+			ENABLE_MAXPHONE=1;
+			DEWONKIFIER=0;
+			TWEAK_NOATIME=1;
+			TWEAK_STORAGE=1;
+			TWEAK_UI=1;
+			TWEAK_NETWORK=1;
+			ENABLE_SWITCH=1;
+			SWITCH_UV=1;
+			SWITCH_CPUSCHED=1;
+			SWITCH_VM=1;
+			SWITCH_CPUFREQ=1;
+			AWAKE_GOVERNOR=conservative;
+			AWAKE_MIN_FREQ=100000;
+			AWAKE_MAX_FREQ=1000000;
+			AWAKE_UP_THRESHOLD=95;
+			AWAKE_MIN_UV=0;
+			AWAKE_MAX_UV=0;
+			SLEEP_GOVERNOR=conservative;
+			SLEEP_MIN_FREQ=100000;
+			SLEEP_MAX_FREQ=1000000;
+			SLEEP_UP_THRESHOLD=95;
+			SLEEP_MIN_UV=0;
+			SLEEP_MAX_UV=0;
+			set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+			set_cavs_sleep $AWAKE_MIN_UV $SLEEP_MAX_UV;
+			display_config $PROFILE;
+			presets;;
+
+	"4")	PROFILE="Moderate_Performance";
+			ENABLE_SS4N1=1;
+			ENABLE_MAXPHONE=1;
+			DEWONKIFIER=0;
+			TWEAK_NOATIME=1;
+			TWEAK_STORAGE=1;
+			TWEAK_UI=1;
+			TWEAK_NETWORK=1;
+			ENABLE_SWITCH=1;
+			SWITCH_UV=1;
+			SWITCH_CPUSCHED=1;
+			SWITCH_VM=1;
+			SWITCH_CPUFREQ=1;
+			AWAKE_GOVERNOR=conservative;
+			AWAKE_MIN_FREQ=100000;
+			AWAKE_MAX_FREQ=1200000;
+			AWAKE_UP_THRESHOLD=;
+			AWAKE_MIN_UV=0;
+			AWAKE_MAX_UV=0;
+			SLEEP_GOVERNOR=conservative;
+			SLEEP_MIN_FREQ=100000;
+			SLEEP_MAX_FREQ=1200000;
+			SLEEP_UP_THRESHOLD=95;
+			SLEEP_MIN_UV=0;
+			SLEEP_MAX_UV=0;
+			set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+			set_cavs_sleep $AWAKE_MIN_UV $SLEEP_MAX_UV;
+			display_config $PROFILE;
+			presets;;
+
+	"5")	PROFILE="High_Performance";
+			ENABLE_SS4N1=1;
+			ENABLE_MAXPHONE=1;
+			DEWONKIFIER=0;
+			TWEAK_NOATIME=1;
+			TWEAK_STORAGE=1;
+			TWEAK_UI=1;
+			TWEAK_NETWORK=1;
+			ENABLE_SWITCH=1;
+			SWITCH_UV=1;
+			SWITCH_CPUSCHED=1;
+			SWITCH_VM=1;
+			SWITCH_CPUFREQ=1;
+			AWAKE_GOVERNOR=conservative;
+			AWAKE_MIN_FREQ=100000;
+			AWAKE_MAX_FREQ=1400000;
+			AWAKE_UP_THRESHOLD=;
+			AWAKE_MIN_UV=0;
+			AWAKE_MAX_UV=0;
+			SLEEP_GOVERNOR=conservative;
+			SLEEP_MIN_FREQ=100000;
+			SLEEP_MAX_FREQ=1400000;
+			SLEEP_UP_THRESHOLD=;
+			SLEEP_MIN_UV=0;
+			SLEEP_MAX_UV=0;
+			set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+			set_cavs_sleep $AWAKE_MIN_UV $SLEEP_MAX_UV;
+			display_config $PROFILE;
+			presets;;
+
+	"6")	PROFILE="Maximum_Overclock_Undervolt";
+			ENABLE_SS4N1=1;
+			ENABLE_MAXPHONE=1;
+			DEWONKIFIER=0;
+			TWEAK_NOATIME=1;
+			TWEAK_STORAGE=1;
+			TWEAK_UI=1;
+			TWEAK_NETWORK=1;
+			ENABLE_SWITCH=1;
+			SWITCH_UV=1;
+			SWITCH_CPUSCHED=1;
+			SWITCH_VM=1;
+			SWITCH_CPUFREQ=1;
+			AWAKE_GOVERNOR=conservative;
+			AWAKE_MIN_FREQ=1400000;
+			AWAKE_MAX_FREQ=1400000;
+			AWAKE_UP_THRESHOLD=;
+			AWAKE_MIN_UV=0;
+			AWAKE_MAX_UV=0;
+			SLEEP_GOVERNOR=conservative;
+			SLEEP_MIN_FREQ=1400000;
+			SLEEP_MAX_FREQ=1400000;
+			SLEEP_UP_THRESHOLD=;
+			SLEEP_MIN_UV=0;
+			SLEEP_MAX_UV=0;
+			set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+			set_cavs_sleep $AWAKE_MIN_UV $SLEEP_MAX_UV;
+			display_config $PROFILE;
+			presets;;
+
+	"7")	PROFILE="UNDO";
+			ENABLE_SS4N1=$p1;
+			ENABLE_MAXPHONE=$p2;
+			DEWONKIFIER=$p3;
+			TWEAK_NOATIME=$p4;
+			TWEAK_STORAGE=$p5;
+			TWEAK_UI=$p6;
+			TWEAK_NETWORK=$p7;
+			ENABLE_SWITCH=$p8;
+			SWITCH_UV=$p9;
+			SWITCH_CPUSCHED=$p10;
+			SWITCH_VM=$p11;
+			SWITCH_CPUFREQ=$p12;
+			AWAKE_GOVERNOR=$p13;
+			AWAKE_MIN_FREQ=$p14;
+			AWAKE_MAX_FREQ=$p15;
+			AWAKE_UP_THRESHOLD=$p16;
+			AWAKE_MIN_UV=$p17;
+			AWAKE_MAX_UV=$p18;
+			SLEEP_GOVERNOR=$p19;
+			SLEEP_MIN_FREQ=$p20;
+			SLEEP_MAX_FREQ=$p21;
+			SLEEP_UP_THRESHOLD=$p22;
+			SLEEP_MIN_UV=$p23;
+			SLEEP_MAX_UV=$p24;
+			set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+			set_cavs_sleep $AWAKE_MIN_UV $SLEEP_MAX_UV;
+			display_config $PROFILE;
+			presets;;
+
+	*)		if [ $PROFILE = "UNDO" ]
+			then
+				echoit "Settings UNCHANGED";
+				echoit "";
+				echoit "Press Enter to continue";
+				read keypress;
+			else
+				echoit "Loaded PRESET = $PROFILE";
+				echoit "Remember to Apply changes!";
+				echoit "";
+				echoit "Press Enter to continue";
+				read keypress;
+			fi;;
+esac;
+}
+
+customize()
+{
+echoit "**************************************************";
+echoit "SSCFG: Customize settings";
+echoit "**************************************************";
+echoit "[1] Enable/Disable features";
+echoit "[2] Customize AWAKE mode";
+echoit "[3] Customize SLEEP mode";
+echoit "[Enter] Return to home screen";
+read choice_customize;
+case $choice_customize in
+	"1") 	enable_features;customize;;
+	"2") 	customize_awake;customize;;
+	"3") 	customize_sleep;customize;;
+	*)		echoit "Customization COMPLETE...";
+			echoit "Remember to Apply changes!";
+			echoit "";			
+			echoit "Press Enter to continue";
+			read keypress;;
+esac;
+}
+
+enable_features()
+{
+echoit "**************************************************";
+echoit "SSCFG: Enable/Disable features";
+echoit "**************************************************";
+echoit "[0] `get_disp $ENABLE_MAXPHONE` Dialer optimization";
+echoit "[1] `get_disp $DEWONKIFIER` Dewonkifier (a1026 mic)";
+echoit "[2] `get_disp $TWEAK_NOATIME` Remount with noatime";
+echoit "[3] `get_disp $TWEAK_STORAGE` Storage/IO tuning";
+echoit "[4] `get_disp $TWEAK_UI` UI/Homescreen optimization";
+echoit "[5] `get_disp $TWEAK_NETWORK` Network performance tuning";
+echoit "[6] `get_disp $ENABLE_SWITCH` Autoswitch between AWAKE/SLEEP modes";
+echoit "[7] `get_disp $SWITCH_UV` Autoswitch for HAVS/CAVS";
+echoit "[8] `get_disp $SWITCH_CPUSCHED` Autoswitch for CPU scheduler";
+echoit "[9] `get_disp $SWITCH_CPUFREQ` Autoswitch for CPU frequency governor";
+echoit "[a] `get_disp $SWITCH_VM` Autoswitch for Virtual Memory";
+echoit "[?] HELP-INFO for all of the above features";
+echoit "[Enter] Return to previous screen";
+read choice_feature;
+case $choice_feature in
+	"0") ENABLE_MAXPHONE=`toggle $ENABLE_MAXPHONE`;enable_features;;
+	"1") DEWONKIFIER=`toggle $DEWONKIFIER`;enable_features;;
+	"2") TWEAK_NOATIME=`toggle $TWEAK_NOATIME`;enable_features;;
+	"3") TWEAK_STORAGE=`toggle $TWEAK_STORAGE`;enable_features;;
+	"4") TWEAK_UI=`toggle $TWEAK_UI`;enable_features;;
+	"5") TWEAK_NETWORK=`toggle $TWEAK_NETWORK`;enable_features;;
+	"6") ENABLE_SWITCH=`toggle $ENABLE_SWITCH`;enable_features;;
+	"7") SWITCH_UV=`toggle $SWITCH_UV`;enable_features;;
+	"8") SWITCH_CPUSCHED=`toggle $SWITCH_CPUSCHED`;enable_features;;
+	"9") SWITCH_CPUFREQ=`toggle $SWITCH_CPUFREQ`;enable_features;;
+	"a") SWITCH_VM=`toggle $SWITCH_VM`;enable_features;;
+	"?") features_help;enable_features;;
+	*) ;;
+esac;
+}
+
+features_help()
+{
+echoit "**************************************************";
+echoit "SSCFG: Help info on features";
+echoit "**************************************************";
+echoit "[ Dialer optimization ]";
+echoit "Optimizes dialer process (com.android.phone) by excluding it from out-of-memory killer and setting highest process priority level";
+echoit "";
+echoit "[ Dewonkifier (a1026 mic) ]";
+echoit "Disables the A1026 noise-cancellation microphone which is one probable cause of call-wonkiness. No longer necessary since wonk was fixed by jyxent";
+echoit "";
+echoit "[ Remount with noatime ]";
+echoit "Remounts all partitions with noatime & nodiratime to reduce unnecessary sync operations";
+echoit "";
+echoit "[ Storage/IO tuning ]";
+echoit "Tells kernel that storage not a rotating disk and optimizes IO operations by increasing read buffer and reducing idling between requests";
+echoit "";
+echoit "[ UI/Homescreen optimization ]";
+echoit "Increases '"maximum-events-per-sec"' to 60 for smoother Homescreen scrolling and transitions";
+echoit "";
+echoit "[ Network performance tuning ]";
+echoit "Reduces wifi scanning to every 3 mins and optimizes TCP parameters for higher throughput and lower latency when accessing network";
+echoit "";
+echoit "[ Autoswitch between AWAKE/SLEEP modes ]";
+echoit "The main function of SS4N1 that senses phone-state and auto-switches between AWAKE and SLEEP modes to provide both performance-on-demand and economy-on-idle. This must be enabled to use any of the other autoswitch features below.";
+echoit "";
+echoit "[ Autoswitch for HAVS/CAVS ]";
+echoit "Phone-state switch which detects Hybrid/Customizable Adaptive Voltage Scaling kernels and switches between higher voltages (AWAKE) and lower voltages (SLEEP)";
+echoit "";
+echoit "[ Autoswitch for CPU scheduler ]";
+echoit "Phone-state switch which detects type of CPU scheduler (BFS/CFS) and switches between low latency (AWAKE) and high throughput (SLEEP) modes";
+echoit "";
+echoit "[ Autoswitch for CPU frequency governor ]";
+echoit "Phone-state switch between specified CPU governors and min & max frequencies for each mode (AWAKE/SLEEP)";
+echoit "";
+echoit "[ Autoswitch for Virtual Memory ]";
+echoit "Phone-state switch between higher free-page reservation (AWAKE) and lower free-page reservation (SLEEP)";
+echoit "**************************************************";
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+}
+
+customize_awake()
+{
+echoit "**************************************************";
+echoit "SSCFG: Customize AWAKE mode";
+echoit "**************************************************";
+echoit "[1] Customize CPU Frequency governor";
+echoit "[2] Customize CAVS/HAVS - set min & max UV values";
+echoit "[3] Customize CAVS - set per individual frequency";
+echoit "[Enter] Return to previous screen";
+read choice_awake;
+case $choice_awake in
+	"1") customize_awake_freq;
+		 customize_awake;;
+	"2") customize_awake_uv;
+		 customize_awake;;
+	"3") customize_cavs;
+		 customize_awake;;
+	*)   ;;
+esac;
+}
+
+customize_awake_freq()
+{
+echoit "**************************************************";
+echoit "SSCFG: Customize AWAKE mode CPU governor";
+echoit "**************************************************";
+echoit "Available CPU Frequency governors:"
+echoit "$ALLGOVS";
+echoit "";
+echoit "Current AWAKE mode CPU governor: $AWAKE_GOVERNOR";
+echoit "Change to?";
+echoit "[1] interactive";
+echoit "[2] conservative";
+echoit "[3] ondemand";
+echoit "[4] powersave";
+echoit "[5] userspace";
+echoit "[6] performance";
+echoit "[7] smartass";
+echoit "[8] SavagedZen";
+echoit "[9] interactiveX";
+echoit "[ENTER] No change";
+read_gov;
+if [ $new_gov ];
+then
+	AWAKE_GOVERNOR=$new_gov;
+	new_gov=;
+	echoit "New AWAKE_GOVERNOR = $AWAKE_GOVERNOR";
+else
+	echoit "AWAKE_GOVERNOR unchanged";
+fi;
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "**************************************************";
+echoit "Current AWAKE minimum CPU freq: $AWAKE_MIN_FREQ";
+echoit "";
+read_freq Minimum;
+if [ $new_freq ];
+then
+	AWAKE_MIN_FREQ=$new_freq;
+	new_freq=;
+	echoit "New AWAKE_MIN_FREQ = $AWAKE_MIN_FREQ";
+else
+	echoit "AWAKE_MIN_FREQ unchanged";
+fi;
+
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "**************************************************";
+echoit "Current AWAKE maximum CPU freq: $AWAKE_MAX_FREQ";
+echoit "";
+read_freq Maximum;
+if [ $new_freq ];
+then
+	AWAKE_MAX_FREQ=$new_freq;
+	new_freq=;
+	echoit "New AWAKE_MAX_FREQ = $AWAKE_MAX_FREQ";
+else
+	echoit "AWAKE_MAX_FREQ unchanged";
+fi;
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+
+if [ $AWAKE_GOVERNOR = "conservative" ] || [ $AWAKE_GOVERNOR = "ondemand" ];
+then
+	echoit "**************************************************";
+	echoit "Up-threshold is the % of cpu load which determines when the cpu will step up to and stay at maximum frequency. Recommended range from 75 to 99";
+	echoit "**************************************************";
+	echoit "Current AWAKE mode up-threshold: $AWAKE_UP_THRESHOLD";
+	echoit "";
+	set_threshold;
+	if [ $new_threshold ]; 
+	then
+		AWAKE_UP_THRESHOLD=$new_threshold;
+		new_threshold=;
+		echoit "New AWAKE_UP_THRESHOLD = $AWAKE_UP_THRESHOLD";
+	else
+		echoit "AWAKE_UP_THRESHOLD unchanged";
+	fi;
+	echoit "";
+	echoit "Press Enter to continue...";
+	read keypress;
+else
+	AWAKE_UP_THRESHOLD=;
+fi;
+}
+
+customize_awake_uv()
+{
+if [ -e /sys/module/avs/parameters/avs_adjust ] || [ -e /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels_havs ];
+then
+	echoit "**************************************************";
+	echoit "SSCFG: Customize CAVS/HAVS - min & max UV values";
+	echoit "**************************************************";
+	echoit "e.g.";
+	echoit "If you set AWAKE_MIN_UV=100 & AWAKE_MAX_UV=50";
+	echoit ">> [ frequency, min voltage, max voltage ]";
+	echoit ">> [ 245000, (950-100), (1000-50) ]";
+	echoit ">> [ 245000, 850, 950 ]";
+	echoit "**************************************************";
+	echoit "Current AWAKE minimum UV value: $AWAKE_MIN_UV";
+	echoit "";
+	read_uv Minimum 275;
+	if [ $new_uv ];
+	then
+		AWAKE_MIN_UV=$new_uv;
+		new_uv=;
+		echoit "New AWAKE_MIN_UV = $AWAKE_MIN_UV";
+	else
+		echoit "AWAKE_MIN_UV unchanged";
+	fi;
+	echoit "";
+	echoit "Press Enter to continue...";
+	read keypress;
+	echoit "**************************************************";
+	echoit "Current AWAKE maximum UV value: $AWAKE_MAX_UV";
+	echoit "";
+	read_uv Maximum 175;
+	if [ $new_uv ];
+	then
+		AWAKE_MAX_UV=$new_uv;
+		new_uv=;
+		echoit "New AWAKE_MAX_UV = $AWAKE_MAX_UV";
+	else
+		echoit "AWAKE_MAX_UV unchanged";
+	fi;
+	if [ -e /sys/module/avs/parameters/avs_adjust ];
+	then
+		echoit "";
+		echoit "Press Enter to view AWAKE mode CAVS table";
+		read keypress;
+		set_cavs_awake $AWAKE_MIN_UV $AWAKE_MAX_UV;
+		display_cavs AWAKE;
+	fi;	
+else
+	echoit "Non-CAVS/HAVS kernel detected";
+	echoit "UnderVolting feature not configurable";
+	echoit "";
+	echoit "Press Enter to continue...";
+	read keypress;
+fi;
+}
+
+customize_cavs()
+{
+if [ -e /sys/module/avs/parameters/avs_adjust ];
+then
+	echoit "**************************************************";
+	echoit "SSCFG: Customize CAVS - per individual frequency";
+	echoit "**************************************************";
+	echoit "ONLY FOR IntersectRaven CAVS kernels!";
+	echoit "";
+	echoit "Has to be done manually...";
+	echoit "1. Save your custom configuration to sdcard";
+	echoit "2. Exit sscfg";
+	echoit "3. Modify /sdcard/ss4n1/custom.conf";
+	echoit "   a. Customize voltage table for AWAKE mode";
+	echoit "   b. Customize voltage table for SLEEP mode";
+	echoit "4. Run sscfg again";
+	echoit "5. Load your modified custom configuration";
+	echoit "6. Apply and exit";
+else
+	echoit "Non-CAVS kernel detected";
+	echoit "UnderVolting feature not configurable";
+fi;
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+}
+
+customize_sleep()
+{
+echoit "**************************************************";
+echoit "SSCFG: Customize SLEEP mode";
+echoit "**************************************************";
+echoit "[1] Customize CPU Frequency governor";
+echoit "[2] Customize CAVS/HAVS - set min & max UV values";
+echoit "[3] Customize CAVS - set per individual frequency";
+echoit "[Enter] Return to previous screen";
+read choice_sleep;
+case $choice_sleep in
+	"1") customize_sleep_freq;
+		 customize_sleep;;
+	"2") customize_sleep_uv;
+		 customize_sleep;;
+	"3") customize_cavs;
+		 customize_sleep;;
+	*)   ;;
+esac;
+}
+
+customize_sleep_freq()
+{
+echoit "**************************************************";
+echoit "SSCFG: Customize SLEEP mode CPU governor";
+echoit "**************************************************";
+echoit "Available CPU frequency governors:"
+echoit "$ALLGOVS";
+echoit "";
+echoit "Current SLEEP mode CPU governor: $SLEEP_GOVERNOR";
+echoit "Change to?";
+echoit "[1] interactive";
+echoit "[2] conservative";
+echoit "[3] ondemand";
+echoit "[4] powersave";
+echoit "[5] userspace";
+echoit "[6] performance";
+echoit "[7] smartass";
+echoit "[8] SavagedZen";
+echoit "[9] interactiveX";
+echoit "[ENTER] No change";
+read_gov;
+if [ $new_gov ];
+then
+	SLEEP_GOVERNOR=$new_gov;
+	new_gov=;
+	echoit "New SLEEP_GOVERNOR = $SLEEP_GOVERNOR";
+else
+	echoit "SLEEP_GOVERNOR unchanged";
+fi;
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "**************************************************";
+echoit "Current SLEEP minimum CPU freq: $SLEEP_MIN_FREQ";
+echoit "";
+read_freq Minimum;
+if [ $new_freq ];
+then
+	SLEEP_MIN_FREQ=$new_freq;
+	new_freq=;
+	echoit "New SLEEP_MIN_FREQ = $SLEEP_MIN_FREQ";
+else
+	echoit "SLEEP_MIN_FREQ unchanged";
+fi;
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+echoit "**************************************************";
+echoit "Current SLEEP maximum CPU freq: $SLEEP_MAX_FREQ";
+echoit "";
+read_freq Maximum;
+if [ $new_freq ];
+then
+	SLEEP_MAX_FREQ=$new_freq;
+	new_freq=;
+	echoit "New SLEEP_MAX_FREQ = $SLEEP_MAX_FREQ";
+else
+	echoit "SLEEP_MAX_FREQ unchanged";
+fi;
+echoit "";
+echoit "Press Enter to continue...";
+read keypress;
+
+if [ $SLEEP_GOVERNOR = "conservative" ] || [ $SLEEP_GOVERNOR = "ondemand" ];
+then
+	echoit "**************************************************";
+	echoit "Up-threshold is the % of cpu load which determines when the cpu will step up to and stay at maximum frequency. Recommended range from 75 to 99";
+	echoit "**************************************************";
+	echoit "Current SLEEP mode up-threshold: $SLEEP_UP_THRESHOLD";
+	echoit "";
+	set_threshold;
+	if [ $new_threshold ]; 
+	then
+		SLEEP_UP_THRESHOLD=$new_threshold;
+		new_threshold=;
+		echoit "New SLEEP_UP_THRESHOLD = $SLEEP_UP_THRESHOLD";
+	else
+		echoit "SLEEP_UP_THRESHOLD unchanged";
+	fi;
+	echoit "";
+	echoit "Press Enter to continue...";
+	read keypress;
+else
+	SLEEP_UP_THRESHOLD=;
+fi;
+}
+
+customize_sleep_uv()
+{
+if [ -e /sys/module/avs/parameters/avs_adjust ] || [ -e /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels_havs ];
+then
+	echoit "**************************************************";
+	echoit "SSCFG: Customize CAVS/HAVS - min & max UV values";
+	echoit "**************************************************";
+	echoit "e.g.";
+	echoit "If you set SLEEP_MIN_UV=100 & SLEEP_MAX_UV=50";
+	echoit ">> [ frequency, min voltage, max voltage ]";
+	echoit ">> [ 245000, (950-100), (1000-50) ]";
+	echoit ">> [ 245000, 850, 950 ]";
+	echoit "**************************************************";
+	echoit "Current SLEEP minimum UV value: $SLEEP_MIN_UV";
+	echoit "";
+	read_uv Minimum 275;
+	if [ $new_uv ];
+	then
+		SLEEP_MIN_UV=$new_uv;
+		new_uv=;
+		echoit "New SLEEP_MIN_UV = $SLEEP_MIN_UV";
+	else
+		echoit "SLEEP_MIN_UV unchanged";
+	fi;
+	echoit "";
+	echoit "Press Enter to continue...";
+	read keypress;
+	echoit "**************************************************";
+	echoit "Current SLEEP maximum UV value: $SLEEP_MAX_UV";
+	echoit "";
+	read_uv Maximum 175;
+	if [ $new_uv ];
+	then
+		SLEEP_MAX_UV=$new_uv;
+		new_uv=;
+		echoit "New SLEEP_MAX_UV = $SLEEP_MAX_UV";
+	else
+		echoit "SLEEP_MAX_UV unchanged";
+	fi;
+	if [ -e /sys/module/avs/parameters/avs_adjust ];
+	then
+		echoit "";
+		echoit "Press Enter to view SLEEP mode CAVS table";
+		read keypress;
+		set_cavs_sleep $SLEEP_MIN_UV $SLEEP_MAX_UV;
+		display_cavs SLEEP; 
+	fi;
+else
+	echoit "Non-CAVS/HAVS kernel detected";
+	echoit "UnderVolting feature not configurable";
+	echoit "";
+	echoit "Press Enter to continue...";
+	read keypress;
+fi;
+}
+
+save_load_sdcard()
+{
+echoit "**************************************************";
+echoit "SSCFG: Save/View/Load custom settings";
+echoit "**************************************************";
+echoit "";
+echoit "[1] Save current settings to sdcard";
+echoit "[2] View saved settings on sdcard";
+echoit "[3] Load saved settings from sdcard";
+echoit "[ENTER] Return to home screen";
+read choice_save_load;
+case $choice_save_load in
+	"1")
+	if [ ! -d /sdcard/ss4n1 ]
+	then
+		mkdir /sdcard/ss4n1;
+	fi;
+	echo "# Custom settings for SS4N1" > /sdcard/ss4n1/custom.conf;
+	echo "ENABLE_SS4N1=$ENABLE_SS4N1" >> /sdcard/ss4n1/custom.conf;
+	echo "ENABLE_MAXPHONE=$ENABLE_MAXPHONE" >> /sdcard/ss4n1/custom.conf;
+	echo "DEWONKIFIER=$DEWONKIFIER" >> /sdcard/ss4n1/custom.conf;
+	echo "TWEAK_NOATIME=$TWEAK_NOATIME" >> /sdcard/ss4n1/custom.conf;
+	echo "TWEAK_STORAGE=$TWEAK_STORAGE" >> /sdcard/ss4n1/custom.conf;
+	echo "TWEAK_UI=$TWEAK_UI" >> /sdcard/ss4n1/custom.conf;
+	echo "TWEAK_NETWORK=$TWEAK_NETWORK" >> /sdcard/ss4n1/custom.conf;
+	echo "ENABLE_SWITCH=$ENABLE_SWITCH" >> /sdcard/ss4n1/custom.conf;
+	echo "SWITCH_UV=$SWITCH_UV" >> /sdcard/ss4n1/custom.conf;
+	echo "SWITCH_CPUSCHED=$SWITCH_CPUSCHED" >> /sdcard/ss4n1/custom.conf;
+	echo "SWITCH_VM=$SWITCH_VM" >> /sdcard/ss4n1/custom.conf;
+	echo "SWITCH_CPUFREQ=$SWITCH_CPUFREQ" >> /sdcard/ss4n1/custom.conf;
+	echo "AWAKE_GOVERNOR=$AWAKE_GOVERNOR" >> /sdcard/ss4n1/custom.conf;
+	echo "AWAKE_MIN_FREQ=$AWAKE_MIN_FREQ" >> /sdcard/ss4n1/custom.conf;
+	echo "AWAKE_MAX_FREQ=$AWAKE_MAX_FREQ" >> /sdcard/ss4n1/custom.conf;
+	echo "AWAKE_UP_THRESHOLD=$AWAKE_UP_THRESHOLD" >> /sdcard/ss4n1/custom.conf;
+	echo "AWAKE_MIN_UV=$AWAKE_MIN_UV" >> /sdcard/ss4n1/custom.conf;
+	echo "AWAKE_MAX_UV=$AWAKE_MAX_UV" >> /sdcard/ss4n1/custom.conf; 
+	echo "SLEEP_GOVERNOR=$SLEEP_GOVERNOR" >> /sdcard/ss4n1/custom.conf;
+	echo "SLEEP_MIN_FREQ=$SLEEP_MIN_FREQ" >> /sdcard/ss4n1/custom.conf;
+	echo "SLEEP_MAX_FREQ=$SLEEP_MAX_FREQ" >> /sdcard/ss4n1/custom.conf;
+	echo "SLEEP_UP_THRESHOLD=$SLEEP_UP_THRESHOLD" >> /sdcard/ss4n1/custom.conf;
+	echo "SLEEP_MIN_UV=$SLEEP_MIN_UV" >> /sdcard/ss4n1/custom.conf;  
+	echo "SLEEP_MAX_UV=$SLEEP_MAX_UV" >> /sdcard/ss4n1/custom.conf;
+	echo "# AWAKE mode CAVS table" >> /sdcard/ss4n1/custom.conf; 
+	echo "A128000=$A128000" >> /sdcard/ss4n1/custom.conf;
+	echo "A245000=$A245000" >> /sdcard/ss4n1/custom.conf;
+	echo "A384000=$A384000" >> /sdcard/ss4n1/custom.conf;
+	echo "A422400=$A422400" >> /sdcard/ss4n1/custom.conf;
+	echo "A460800=$A460800" >> /sdcard/ss4n1/custom.conf;
+	echo "A499200=$A499200" >> /sdcard/ss4n1/custom.conf;
+	echo "A537600=$A537600" >> /sdcard/ss4n1/custom.conf;
+	echo "A576000=$A576000" >> /sdcard/ss4n1/custom.conf;
+	echo "A614400=$A614400" >> /sdcard/ss4n1/custom.conf;
+	echo "A652800=$A652800" >> /sdcard/ss4n1/custom.conf;
+	echo "A691200=$A691200" >> /sdcard/ss4n1/custom.conf;
+	echo "A729600=$A729600" >> /sdcard/ss4n1/custom.conf;
+	echo "A768000=$A768000" >> /sdcard/ss4n1/custom.conf;
+	echo "A806400=$A806400" >> /sdcard/ss4n1/custom.conf;
+	echo "A844800=$A844800" >> /sdcard/ss4n1/custom.conf;
+	echo "A883200=$A883200" >> /sdcard/ss4n1/custom.conf;
+	echo "A921600=$A921600" >> /sdcard/ss4n1/custom.conf;
+	echo "A960000=$A960000" >> /sdcard/ss4n1/custom.conf;
+	echo "A998400=$A998400" >> /sdcard/ss4n1/custom.conf;
+	echo "A1036800=$A1036800" >> /sdcard/ss4n1/custom.conf;
+	echo "A1075200=$A1075200" >> /sdcard/ss4n1/custom.conf;
+	echo "A1113600=$A1113600" >> /sdcard/ss4n1/custom.conf;
+	echo "# SLEEP mode CAVS table" >> /sdcard/ss4n1/custom.conf; 
+	echo "S128000=$S128000" >> /sdcard/ss4n1/custom.conf;
+	echo "S245000=$S245000" >> /sdcard/ss4n1/custom.conf;
+	echo "S384000=$S384000" >> /sdcard/ss4n1/custom.conf;
+	echo "S422400=$S422400" >> /sdcard/ss4n1/custom.conf;
+	echo "S460800=$S460800" >> /sdcard/ss4n1/custom.conf;
+	echo "S499200=$S499200" >> /sdcard/ss4n1/custom.conf;
+	echo "S537600=$S537600" >> /sdcard/ss4n1/custom.conf;
+	echo "S576000=$S576000" >> /sdcard/ss4n1/custom.conf;
+	echo "S614400=$S614400" >> /sdcard/ss4n1/custom.conf;
+	echo "S652800=$S652800" >> /sdcard/ss4n1/custom.conf;
+	echo "S691200=$S691200" >> /sdcard/ss4n1/custom.conf;
+	echo "S729600=$S729600" >> /sdcard/ss4n1/custom.conf;
+	echo "S768000=$S768000" >> /sdcard/ss4n1/custom.conf;
+	echo "S806400=$S806400" >> /sdcard/ss4n1/custom.conf;
+	echo "S844800=$S844800" >> /sdcard/ss4n1/custom.conf;
+	echo "S883200=$S883200" >> /sdcard/ss4n1/custom.conf;
+	echo "S921600=$S921600" >> /sdcard/ss4n1/custom.conf;
+	echo "S960000=$S960000" >> /sdcard/ss4n1/custom.conf;
+	echo "S998400=$S998400" >> /sdcard/ss4n1/custom.conf;
+	echo "S1036800=$S1036800" >> /sdcard/ss4n1/custom.conf;
+	echo "S1075200=$S1075200" >> /sdcard/ss4n1/custom.conf;
+	echo "S1113600=$S1113600" >> /sdcard/ss4n1/custom.conf;
+	echoit "Current settings saved to /sdcard/ss4n1/custom.conf";
+	echoit "";
+	echoit "Press Enter to continue";
+	read keypress;
+	save_load_sdcard;; 
+
+	"2")
+	if [ ! -e /sdcard/ss4n1/custom.conf ]
+	then
+		echoit "/sdcard/ss4n1/custom.conf does not exist!";
+	else
+		echoit "**************************************************";
+		echoit "SSCFG: SAVED settings (/sdcard/ss4n1/custom.conf)";
+		echoit "**************************************************";
+		head -n 25 /sdcard/ss4n1/custom.conf;
+	fi;
+	echoit "";
+	echoit "Press Enter to continue";
+	read keypress;
+	save_load_sdcard;;	
+
+	"3")
+	if [ ! -e /sdcard/ss4n1/custom.conf ]
+	then
+		echoit "/sdcard/ss4n1/custom.conf does not exist!";
+		echoit "";
+	else
+		. /sdcard/ss4n1/custom.conf;
+		echoit "Settings loaded from /sdcard/ss4n1/custom.conf";
+		echoit "Remember to Apply changes!";
+	fi;
+	echoit "";
+	echoit "Press Enter to continue";
+	read keypress;
+	save_load_sdcard;;
+
+	*) ;;	
+esac;
+}
+
+# Start of script
+
+# Initialize settings;
+. /system/etc/ss4n1.conf;
+ALLGOVS=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors`;
+ALLFREQS=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies`;
+
+while [ 1 ];
+do
+	echoit "**************************************************";
+	echoit "SSCFG: Home Screen";
+	echoit "**************************************************";
+	echoit "This utility configures the SS4N1 script [/system/bin/ss4n1] which auto-switches settings based on phone-state (AWAKE/SLEEPING).";
+	echoit "";
+	echoit "Please choose an option below and press Enter.";
+	disp=`get_disp $ENABLE_SS4N1`;
+	echoit "[1] $disp SS4N1";
+	echoit "[2] Display settings";
+	echoit "[3] Load PRESET profiles";
+	echoit "[4] Customize settings";
+	echoit "[5] Save/View/Load settings on sdcard";
+	echoit "[6] *** Apply changes and exit ***";
+	echoit "[Enter] Exit without applying changes";
+	read choice;
+	case $choice in
+		"1") ENABLE_SS4N1=`toggle $ENABLE_SS4N1`;;
+		"2") display_settings;;
+		"3") save_settings;PROFILE="UNDO";presets;;
+		"4") customize;;
+		"5") save_load_sdcard;;
+		"6") apply_changes;;
+		*) 	 echoit "Exiting without applying changes"; exit;; 
+	esac;
+done;

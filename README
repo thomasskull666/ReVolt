@@ -1,0 +1,101 @@
+Genocide 1.4GhzOC EC05 Kernel
+for Samsung Epic 4G (EC05, DK28, and EB13 compatible)
+
+http://forum.xda-developers.com/showthread.php?t=961614
+
+How to compile: 
+If you do not have the toolchain then get it from codesourcery.com and install/extract.  Since I am compiling on an Ubuntu VM I use http://www.codesourcery.com/public/gnu_toolchain/arm-none-linux-gnueabi/arm-2009q3-67-arm-none-linux-gnueabi-i686-pc-linux-gnu.tar.bz2
+Browse to Kernel/arch/arm/configs/ and edit victory_03_defconfig and change the path for CONFIG_INITRAMFS_SOURCE=
+Then refer to the README.txt on what else you need to change.
+
+Changelog Legend: "+" introduce addition/modification, "-" removed addition/modification, "*" changed addition/modification
+
+Changelog:
+
+*Voodoo Sound updated to v10
+
+2.0
++dual boot support (http://forum.xda-developers.com/showthread.php?p=15378860)
+*new boot logo for v2.0
+*fixed typo in cpu code
+
+1.1
+*Tweaks to initramfs for root in adb
+-Revert RNDIS patch due to breaking linux (wired tether still works) https://github.com/Rodderik/Genocide-Kernel/commit/b6b221bcb622ff369fa7c1c82543b3e75bb32748
++ClockworkMod 3.1.0.1 Purple Edition & working redirector (DRockstar https://github.com/DRockstar/Clean-Kernel-EC05/commit/ac713f90ec2a2560bc7fb05225341a4e4772a199)
+*Busybox handled by recovery binary
+*Moved superuser.apk location
+*Swapped redbend_ua for bmlwrite
++Other scripts and tweaks from DRockstar into initramfs
++interactive governor + fixes
+*ondemand governor fix to not scale below min frequency (nubecoder)
+*Voodoo Sound updated to v9
++mountums & umountums added for USB Mass Storage in CWM (DRockstar)
++DroidDream malware prevention code in custom_init.sh script
+*Voodoo Sound updated to v8
+-Revert lowmemorykiller.c patch (causes kswapd0 to be stuck awake and eat cpu time)
++Kernel splash image was disabled after DK28 - Re-enabled (Stored in Kernel/drivers/video/samsung/logo_rgb24_wvga_portrait_victory.h)
+*Add KBUILD_BUILD_VERSION to build.sh
++keytimer script and mods from DRockstar http://forum.xda-developers.com/showthread.php?p=13017148
+*initramfs changes (persistant Superuser.apk)
+
+1.0
++Voodoo Color by supercurio (http://perso.curio.be/android/Voodoo_color_mDNIe_GT-I9000.patch)
+*New Overclocks and sysfs undervolting support (rasdeep, existz, tanimn, gzub, and thomasskull666...pulling my hair out over this one)
++Root, custom init scripts, misc tweaks (care of tanimn)
+*Voodoo Sound updated to v7
++Conservative governor minimum frequency fix (You rock GZub https://github.com/gzub/EC05-Zub/commit/8a47c52d85d982ef035d24da293bcc046412b63e)
+-Remove refresh rate change (We need proper LCD documentation before I can support changing this)
+-Clean up github files and rename repo
+-Removed video lag & camera force close fix (Samsung fixed the camera issues for EC05)
++Removed iqmsd service from initramfs (CIQ bad!)
++Keyboard delay runtime sysfs patch by mkasick http://forum.xda-developers.com/showthread.php?p=11755093
++TV compile fix (thanks tanimn and nullghost)
+*Tweaked config flags and recompiled modules (thanks gzub for the help)
+-Keyboard patch by mkasick in preparation for updated patch
++Refresh rate changed from 60 to 72 (slightly better framerates)
+*Voodoo Sound updated to v6
++EC05 source merge
++scaling_available_frequencies sysfs patch from nullghost http://forum.xda-developers.com/showthread.php?t=1000309
+
+0.4a
++lowmemorykiller.c patch https://github.com/existz/kernel-i9000-suckerpunch/
++Voodoo Sound v4 by supercurio https://github.com/project-voodoo/sound_kernel_patches
++Added sched_autogroup v4 patch (Patch to smooth system under load) https://github.com/existz/kernel-i9000-suckerpunch/ & http://www.phoronix.com/scan.php?page=article&item=linux_2637_video&num=1 NOTE: Enable/disable by echoing either 0 or 1 to /proc/sys/kernel/sched_autogroup_enabled
++Changed swappiness from 60 to 10 (dumps RAM to swap less often for those with a swap partition)
++Wireless Tether fixes by mkasick http://forum.xda-developers.com/showpost.php?p=11808622&postcount=88 (should fix 4G tethering issues)
++Keyboard patch by mkasick http://forum.xda-developers.com/showthread.php?p=11755093
++Battery Status Polling Interval changed from 2000 to 30000 (30 seconds)
++RDNIS Froyo Fix by mkasick (use wired tether from http://forum.xda-developers.com/showthread.php?t=964925)
++Added RNDIS support for Wired Tether https://github.com/DevinXtreme/Xtreme_Epic_Kernel
++Added CONFIG_ARM_THUMBEE=y (as suggested by gzub)
++Set 4k read ahead in mtd_blkdevs.c (faster boot?)
++existz-initramfs-i9000-suckerpunch ported to Epic - BROKEN RIGHT NOW DO NOT USE!!!
++Removed CONFIG_DEBUG_INFO=y (gives us smaller kernel image and all modules including new cifs.ko)
++CFLAGS_KERNEL	= -O2 -pipe -mcpu=cortex-a8 -mtune=cortex-a8 -mfloat-abi=soft -mfpu=neon
+-Removed About Phone information (Caused FC and weird bugs in apps)
+*Fixed error that wouldn't let cpu drop below 200MHz
+
+0.3a:
++Set defaults speeds to 200MHz min and 1000MHz max (NOW REQUIRES SETCPU TO OVERCLOCK)
++Compiled in video lag & camera force close fix by mkasick http://forum.xda-developers.com/showthread.php?t=970452
+*Fixed issue with Firmware version in About Phone (FIXES PANDORA)
++Set initramfs root UID/GID
++Compiled and added cifs.ko to initramfs
+-Removed cifs from kernel (you can try the module if you want but it broke the initramfs with it in there plus it is a nasty 2.3MB)
+
+0.2a:
++New EB13 initramfs (no more DK28 stuff)
++Added EXT4 Support
++Added bootanimation support
++Updated kernel modules from EB13
++Added recovery (need to test redirector)
++Added Firmware version to About Phone
++Started on Voodoo mods
+
+0.1a:
++1.2GHz overclock
++1Ghz 25mV undervolt
++DK28 initramfs (for pre-EB13/OTA compatibility)
+
+Please leave comments and suggestions or if you would like to help leave me a message in the thread on xda-developers (or send me a private message)
