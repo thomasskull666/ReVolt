@@ -1,6 +1,8 @@
 Genocide 1.4GhzOC EC05 Kernel
 for Samsung Epic 4G (EC05, DK28, and EB13 compatible)
 
+Edited for ERA ReVolt Kernel by thomasskull666
+
 http://forum.xda-developers.com/showthread.php?t=961614
 
 How to compile: 
@@ -10,7 +12,13 @@ Then refer to the README.txt on what else you need to change.
 
 Changelog Legend: "+" introduce addition/modification, "-" removed addition/modification, "*" changed addition/modification
 
-Changelog:
+Changelog (ReVolt):
+
+v1.0
++Add support for new(er) keyboard patch from mkasick.  It can be accessed with sysfs at /sys/devices/platform/s3c-keypad/column_delay.  Value is set to 5 in custom_init.sh in the initramfs.
++Some random changes to CPU code, mostly line comments etc.
+
+Changelog (Genocide):
 
 *Voodoo Sound updated to v10
 
